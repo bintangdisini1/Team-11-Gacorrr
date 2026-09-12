@@ -9,6 +9,7 @@ public class GameMenu : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject settingsMenuUI;
     public GameObject creditsMenuUI;
+    public GameObject mainMenuUI;
     public GameObject joystick; // drag joystick kamu ke sini (opsional)
 
     [Header("Timeline Credit")]
@@ -21,6 +22,7 @@ public class GameMenu : MonoBehaviour
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
+        if (mainMenuUI != null) mainMenuUI.SetActive(true);
     }
 
     void OnEnable()
@@ -88,6 +90,7 @@ public class GameMenu : MonoBehaviour
         if (creditDirector != null) creditDirector.Stop();
 
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (mainMenuUI != null) mainMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
 
@@ -116,6 +119,7 @@ public class GameMenu : MonoBehaviour
         if (creditDirector != null) creditDirector.Stop();
 
         if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
+        if (mainMenuUI != null) mainMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
 
@@ -134,6 +138,7 @@ public class GameMenu : MonoBehaviour
         if (creditDirector != null) creditDirector.Stop();
 
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+        if (mainMenuUI != null) mainMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(true);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
     }
@@ -141,7 +146,7 @@ public class GameMenu : MonoBehaviour
     public void CloseSettings()
     {
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
+        if (mainMenuUI != null) mainMenuUI.SetActive(true);
     }
 
     // ==========================================
@@ -150,6 +155,7 @@ public class GameMenu : MonoBehaviour
 
     public void OpenCredits()
     {
+        if (mainMenuUI != null) mainMenuUI.SetActive(false);
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(true);

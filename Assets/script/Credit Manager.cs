@@ -6,6 +6,7 @@ public class CreditManager : MonoBehaviour
     [Header("Panels Reference")]
     public GameObject creditsPanel;
     public GameObject settingsPanel;
+    public GameObject mainPanel;
 
     [Header("Timeline Reference")]
     public PlayableDirector creditDirector; // Drag GameObject PlayableDirector ke sini
@@ -60,6 +61,7 @@ public class CreditManager : MonoBehaviour
 
         // Matikan panel Credit, aktifkan panel Settings
         if (creditsPanel != null) creditsPanel.SetActive(false);
+        if (mainPanel != null) mainPanel.SetActive(false);
         if (settingsPanel != null) settingsPanel.SetActive(true);
     }
 }
