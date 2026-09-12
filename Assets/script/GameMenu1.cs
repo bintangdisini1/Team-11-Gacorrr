@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.Playables; // 👈 Wajib ditambahkan untuk Timeline
 
-public class GameMenu : MonoBehaviour
+public class GameMenu1 : MonoBehaviour
 {
     [Header("UI Panels")]
     public GameObject pauseMenuUI;
@@ -130,7 +130,7 @@ public class GameMenu : MonoBehaviour
     }
 
     // ==========================================
-    // ⚙️ SETTINGS SYSTEM
+    // ⚙ SETTINGS SYSTEM
     // ==========================================
 
     public void OpenSettings()

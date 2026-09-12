@@ -1,36 +1,70 @@
 ﻿using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuestManager : MonoBehaviour
 {
-    public static QuestManager Instance;
+    public static QuestManager Instance { get; private set; }
 
-    [Header("Pengaturan Quest")]
-    public string questTitle = "Lengkapi Kode C#";
-    public int totalRequirement = 4;
+    [Header("Quest Settings")]
+    public int totalRequirement = 5;
+    public float timeLimit = 120f;
+
+    [Header("UI References")]
+    public Text progressText;
+    public Text timerText;
+    public GameObject winPanel;
+    public GameObject losePanel;
+
+    [Header("Quest State")]
     public int currentProgress = 0;
-    public bool isQuestCompleted = false;
 
-    [Header("UI Quest")]
-    public TextMeshProUGUI questText;
-    public GameObject codePuzzlePanel;
+    private float currentTime;
+    private bool isQuestCompleted = false;
+    private bool isTimerRunning = false;
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
     {
+        currentTime = timeLimit;
+        isTimerRunning = true;
         UpdateQuestUI();
     }
 
-    public void AddProgress()
+    private void Update()
+    {
+        if (isTimerRunning && !isQuestCompleted)
+        {
+            if (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+                UpdateTimerUI();
+            }
+            else
+            {
+                currentTime = 0;
+                UpdateTimerUI();
+                FailQuest();
+            }
+        }
+    }
+
+    public void AddProgress(int amount = 1)
     {
         if (isQuestCompleted) return;
 
-        currentProgress++;
+        currentProgress += amount;
         UpdateQuestUI();
 
         if (currentProgress >= totalRequirement)
@@ -39,43 +73,56 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    public void RemoveProgress()
-    {
-        if (isQuestCompleted) return;
-
-        currentProgress = Mathf.Max(0, currentProgress - 1);
-        UpdateQuestUI();
-    }
-
     public void UpdateQuestUI()
     {
-        if (questText != null)
+        if (progressText != null)
         {
-            if (isQuestCompleted)
-            {
-                questText.text = $"<s>{questTitle} (Selesai)</s>";
-                questText.color = Color.green;
-            }
-            else
-            {
-                questText.text = $"{questTitle} ({currentProgress}/{totalRequirement})";
-            }
+            progressText.text = "Progress: " + currentProgress + " / " + totalRequirement;
         }
     }
 
-    private void CompleteQuest()
+    private void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            int minutes = Mathf.FloorToInt(currentTime / 60);
+            int seconds = Mathf.FloorToInt(currentTime % 60);
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+    }
+
+    public void CompleteQuest()
     {
         isQuestCompleted = true;
-        Debug.Log("🎉 PUZZLE KODE SELESAI!");
-        UpdateQuestUI();
-        Invoke(nameof(CloseCodePanel), 0.5f);
+        isTimerRunning = false;
+
+        if (winPanel != null)
+        {
+            winPanel.SetActive(true);
+        }
     }
 
-    private void CloseCodePanel()
+    public void FailQuest()
     {
-        if (codePuzzlePanel != null)
+        isQuestCompleted = false;
+        isTimerRunning = false;
+
+        if (losePanel != null)
         {
-            codePuzzlePanel.SetActive(false);
+            losePanel.SetActive(true);
         }
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void CloseCodePanel()
+    {
+    }
+
+    public void CloseWirePanel()
+    {
     }
 }

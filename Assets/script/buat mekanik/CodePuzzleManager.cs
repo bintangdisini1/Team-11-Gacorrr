@@ -1,51 +1,130 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class CodePuzzleManager : MonoBehaviour
+public class QuestManager : MonoBehaviour
 {
-    public static CodePuzzleManager Instance { get; private set; }
+    public static QuestManager Instance { get; private set; }
 
-    [Header("Puzzle Configuration")]
-    public List<CodeSlot> puzzleSlots = new List<CodeSlot>();
+    [Header("Quest Settings")]
+    public int totalRequirement = 5; // Disesuaikan dengan CodePuzzleManager
+    public float timeLimit = 120f;
+
+    [Header("UI References")]
+    public Text progressText;
+    public Text timerText;
+    public GameObject winPanel;
+    public GameObject losePanel;
+
+    [Header("Quest State")]
+    public int currentProgress = 0; // Public agar bisa diakses langsung oleh CodePuzzleManager
+
+    private float currentTime;
+    private bool isQuestCompleted = false;
+    private bool isTimerRunning = false;
 
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
     {
-        if (QuestManager.Instance != null && puzzleSlots.Count > 0)
+        currentTime = timeLimit;
+        isTimerRunning = true;
+        UpdateQuestUI();
+    }
+
+    private void Update()
+    {
+        if (isTimerRunning && !isQuestCompleted)
         {
-            QuestManager.Instance.totalRequirement = puzzleSlots.Count;
-            QuestManager.Instance.currentProgress = 0;
-            QuestManager.Instance.UpdateQuestUI();
+            if (currentTime > 0)
+            {
+                currentTime -= Time.deltaTime;
+                UpdateTimerUI();
+            }
+            else
+            {
+                currentTime = 0;
+                UpdateTimerUI();
+                FailQuest();
+            }
         }
     }
 
-    public void CheckPuzzleStatus()
+    // Mendukung pemanggilan AddProgress() tanpa parameter maupun dengan parameter (e.g. AddProgress(1))
+    public void AddProgress(int amount = 1)
     {
-        int correctCount = 0;
+        if (isQuestCompleted) return;
 
-        foreach (CodeSlot slot in puzzleSlots)
+        currentProgress += amount;
+        UpdateQuestUI();
+
+        if (currentProgress >= totalRequirement)
         {
-            if (slot != null && slot.IsCorrect)
-            {
-                correctCount++;
-            }
+            CompleteQuest();
         }
+    }
 
-        if (QuestManager.Instance != null)
+    // Method untuk memperbarui tampilan UI progress quest
+    public void UpdateQuestUI()
+    {
+        if (progressText != null)
         {
-            QuestManager.Instance.currentProgress = correctCount;
-            QuestManager.Instance.UpdateQuestUI();
-
-            // Jika semua slot terisi dengan benar, panggil penyelelesaian quest
-            if (correctCount >= puzzleSlots.Count && puzzleSlots.Count > 0)
-            {
-                QuestManager.Instance.AddProgress();
-            }
+            progressText.text = "Progress: " + currentProgress + " / " + totalRequirement;
         }
+    }
+
+    private void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            int minutes = Mathf.FloorToInt(currentTime / 60);
+            int seconds = Mathf.FloorToInt(currentTime % 60);
+            timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+    }
+
+    public void CompleteQuest()
+    {
+        isQuestCompleted = true;
+        isTimerRunning = false;
+
+        if (winPanel != null)
+        {
+            winPanel.SetActive(true);
+        }
+    }
+
+    public void FailQuest()
+    {
+        isQuestCompleted = false;
+        isTimerRunning = false;
+
+        if (losePanel != null)
+        {
+            losePanel.SetActive(true);
+        }
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void CloseCodePanel()
+    {
+    }
+
+    public void CloseWirePanel()
+    {
     }
 }
