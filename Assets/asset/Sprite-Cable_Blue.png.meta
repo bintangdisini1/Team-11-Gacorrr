@@ -143,7 +143,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Sprite-Cable_Blue_0: -1123577504566801803
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

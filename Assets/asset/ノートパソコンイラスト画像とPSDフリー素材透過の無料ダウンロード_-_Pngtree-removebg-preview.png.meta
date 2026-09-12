@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -143,7 +143,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "\u30CE\u30FC\u30C8\u30D1\u30BD\u30B3\u30F3\u30A4\u30E9\u30B9\u30C8\u753B\u50CF\u3068PSD\u30D5\u30EA\u30FC\u7D20\u6750\u900F\u904E\u306E\u7121\u6599\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9_-_Pngtree-removebg-preview_0": 880950477522689694
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
