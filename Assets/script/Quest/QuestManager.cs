@@ -6,22 +6,22 @@ public class QuestManager : MonoBehaviour
     public static QuestManager Instance;
 
     [Header("Pengaturan Quest")]
-    public string questTitle = "Perbaiki Kabel Listrik";
+    public string questTitle = "Lengkapi Kode C#";
     public int totalRequirement = 4;
-    private int currentProgress = 0;
-    private bool isQuestCompleted = false;
+    public int currentProgress = 0;
+    public bool isQuestCompleted = false;
 
     [Header("UI Quest")]
     public TextMeshProUGUI questText;
-    public GameObject wireGamePanel;
+    public GameObject codePuzzlePanel;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
-    void Start()
+    private void Start()
     {
         UpdateQuestUI();
     }
@@ -39,7 +39,15 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    void UpdateQuestUI()
+    public void RemoveProgress()
+    {
+        if (isQuestCompleted) return;
+
+        currentProgress = Mathf.Max(0, currentProgress - 1);
+        UpdateQuestUI();
+    }
+
+    public void UpdateQuestUI()
     {
         if (questText != null)
         {
@@ -55,19 +63,19 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    void CompleteQuest()
+    private void CompleteQuest()
     {
         isQuestCompleted = true;
-        Debug.Log("🎉 QUEST SELESAI!");
+        Debug.Log("🎉 PUZZLE KODE SELESAI!");
         UpdateQuestUI();
-        Invoke(nameof(CloseWirePanel), 0.5f);
+        Invoke(nameof(CloseCodePanel), 0.5f);
     }
 
-    void CloseWirePanel()
+    private void CloseCodePanel()
     {
-        if (wireGamePanel != null)
+        if (codePuzzlePanel != null)
         {
-            wireGamePanel.SetActive(false);
+            codePuzzlePanel.SetActive(false);
         }
     }
 }
