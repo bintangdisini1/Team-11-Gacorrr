@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.Playables; // 👈 Wajib ditambahkan untuk Timeline
 
 public class GameMenu : MonoBehaviour
 {
@@ -10,27 +11,44 @@ public class GameMenu : MonoBehaviour
     public GameObject creditsMenuUI;
     public GameObject joystick; // drag joystick kamu ke sini (opsional)
 
+    [Header("Timeline Credit")]
+    public PlayableDirector creditDirector; // 👈 Drag GameObject yang punya PlayableDirector ke sini
+
     private bool isPaused = false;
 
     void Start()
     {
-        // Memastikan semua UI panel tersembunyi saat game dimulai
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
     }
 
+    void OnEnable()
+    {
+        // Berlangganan event ketika Timeline berhenti/selesai
+        if (creditDirector != null)
+        {
+            creditDirector.stopped += OnCreditTimelineEnded;
+        }
+    }
+
+    void OnDisable()
+    {
+        // Melepas langganan event agar tidak memicu memory leak
+        if (creditDirector != null)
+        {
+            creditDirector.stopped -= OnCreditTimelineEnded;
+        }
+    }
+
     void Update()
     {
-        // Tombol pause (PC)
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
-            // Jika menu Credits sedang terbuka, tekan Escape/P akan menutup Credits dulu
             if (creditsMenuUI != null && creditsMenuUI.activeSelf)
             {
                 CloseCredits();
             }
-            // Jika menu Settings sedang terbuka, tekan Escape/P akan menutup Settings dulu
             else if (settingsMenuUI != null && settingsMenuUI.activeSelf)
             {
                 CloseSettings();
@@ -63,53 +81,47 @@ public class GameMenu : MonoBehaviour
 
     public void Resume()
     {
-        // Aktifkan game kembali
         Time.timeScale = 1f;
         isPaused = false;
 
-        // Matikan semua UI panel
+        // Stop Timeline jika dipotong di tengah jalan
+        if (creditDirector != null) creditDirector.Stop();
+
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
 
-        // Reset input mobile
         Input.ResetInputAxes();
 
-        // Reset EventSystem (biar touch/click balik normal)
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);
 
-        // Refresh joystick
         if (joystick != null)
         {
             joystick.SetActive(false);
             joystick.SetActive(true);
         }
 
-        // Cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // Audio
         AudioListener.pause = false;
     }
 
     public void Pause()
     {
-        // Pause game
         Time.timeScale = 0f;
         isPaused = true;
 
-        // Tampilkan UI pause & sembunyikan sub-menu lainnya
+        if (creditDirector != null) creditDirector.Stop();
+
         if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
 
-        // Cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Audio
         AudioListener.pause = true;
     }
 
@@ -119,6 +131,8 @@ public class GameMenu : MonoBehaviour
 
     public void OpenSettings()
     {
+        if (creditDirector != null) creditDirector.Stop();
+
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(true);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
@@ -131,7 +145,7 @@ public class GameMenu : MonoBehaviour
     }
 
     // ==========================================
-    // 📜 CREDITS SYSTEM
+    // 📜 CREDITS SYSTEM (TIMELINE)
     // ==========================================
 
     public void OpenCredits()
@@ -139,12 +153,31 @@ public class GameMenu : MonoBehaviour
         if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
         if (settingsMenuUI != null) settingsMenuUI.SetActive(false);
         if (creditsMenuUI != null) creditsMenuUI.SetActive(true);
+
+        // Putar Timeline animasi credit dari awal
+        if (creditDirector != null)
+        {
+            creditDirector.time = 0;
+            creditDirector.Play();
+        }
     }
 
     public void CloseCredits()
     {
+        // Stop Timeline jika player skip/menutup manual
+        if (creditDirector != null) creditDirector.Stop();
+
         if (creditsMenuUI != null) creditsMenuUI.SetActive(false);
-        if (pauseMenuUI != null) pauseMenuUI.SetActive(true);
+        if (settingsMenuUI != null) settingsMenuUI.SetActive(true);
+    }
+
+    // Callback otomatis yang dipanggil saat Timeline selesai diputar
+    private void OnCreditTimelineEnded(PlayableDirector director)
+    {
+        if (director == creditDirector)
+        {
+            CloseCredits(); // Pindah otomatis ke panel Settings
+        }
     }
 
     // ==========================================

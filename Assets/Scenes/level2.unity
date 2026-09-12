@@ -2073,6 +2073,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197b0f650cdc93347a434019cf1de91a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pauseMenuUI: {fileID: 0}
+  settingsMenuUI: {fileID: 0}
+  creditsMenuUI: {fileID: 0}
+  joystick: {fileID: 0}
+  creditDirector: {fileID: 0}
 --- !u!4 &1380224272
 Transform:
   m_ObjectHideFlags: 0
